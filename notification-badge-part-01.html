@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>CSS Notification Badge</title>
+    <link rel="stylesheet" type="text/css" href="./notification-badge-part-01.css">
+    
+</head>
+<body>
+
+    <h1>Engineering a CSS-Only Notification Badge<div class="sub">(Part I)</div></h1>
+
+    <p>So, we're running a party finding web app, and we'd like to notify our users of the number of parties that will be hosted within a one kilometer radius of their current location. And because we'd like to do this in a non-obtrusive manner, we've decided to go with a notification badge.  Something like this:</p>
+    <div class="example">
+        <span class="mdl-badge" data-badge="9">Parties Nearby</span>
+    </div>
+    <p>Yeah. The notification badge is that pinkish circle with a number inside, and the item is what the notification badge appears to be sitting on. With that, our users can readily tell that it's gonna be that kinda night.</p>
+    <p>So, we look up <a href="https://getmdl.io">the material design lite (mdl) website</a> and see how dead easy it is to <a href="https://getmdl.io/components/index.html#badges-section">include an mdl badge</a> in our app. We quickly cook up the following code:</p>
+    <!-- <div class="mdl-badge" data-badge="9">Parties Nearby</div> -->
+    <script src="https://gist.github.com/Eti-mfon/b611d2c5019059e9ef5b7164c0b5ab26.js"></script>
+    <p>We then copy the following from the mdl website section on <a href="https://getmdl.io/started/index.html#download">how to include mdl in your site</a> and paste in the head of our html.</p>
+    <script src="https://gist.github.com/Eti-mfon/751186c2287e3f4c2d3d09053f3c8611.js"></script>
+    <p>And we're good to go....</p>
+    <p>Sometime later, we want to know how the <em class="attribute-value">mdl-badge</em> class was actually implemented. Because, well, knowledge!</p>
+    <p>So we start with a clean slate on our favourite text editor. Since there is no html element one could look at and say, <q>Oh, that could pass for a badge!</q> we chose a <em>semantically meaningless</em> html element &mdash; a <em class="element-name">span</em> or a <em class="element-name">div</em> &mdash; and build up on it with css. Our first code goes this way:</p>
+    <!-- <span class="my-badge" data-badge="9">Parties Nearby</span> -->
+    <script src="https://gist.github.com/Eti-mfon/70f159d952fe1f8b7ee47c64e8f3aec8.js"></script>
+    <div class="example example--01">
+        <span class="my-badge" data-badge="9">Parties Nearby</span>
+    </div>
+    <p>We've included a <em class="attribute-value">my-badge</em> class on the element and created a <em class="attribute-name">data-badge</em> attribute to hold the data we want to display as notification &mdash; the number of parties. We save the html file and run it in the browser. And nothing interesting happens. We don't even get to see how many parties there are going to be in the USA this night!</p>
+    <p>It seems we need to fetch the data from the <em class="attribute-name">data-badge</em> attribute and then insert it just <strong>after</strong> the content of the <em class="element-name">span</em>.</p>
+    <p>Remember, we're doing this for every element of the <em class="attribute-value">my-badge</em> class (that is, elements whose class attribute contains the value <em class="attribute-value">my-badge</em>).</p>
+    <p>We can do that with css.</p>
+    <!-- <style>
+        .my-badge:after {}
+    </style>
+    <span class="my-badge" data-badge="9">Parties Nearby</span> -->
+    <script src="https://gist.github.com/Eti-mfon/0cd9bf87738445cdb4fab68fa7715abc.js"></script>
+    <div class="example example--02">
+        <span class="my-badge" data-badge="9">Parties Nearby</span>
+    </div>
+    <p>Nothing interesting happens, either! Really, we've only just added a css selector with an empty ruleset to our code. The selector, however, is by itself interesting.</p>
+    <p>Let's say there are two types of elements in html. Real elements and imaginary elements. The real elements are the ones we write out by ourselves (or with the help of Javascript). Since they are the real deal we just call them elements and their realness is implied. Now, everytime we code up an element, two imaginary elements are inserted into it for us &mdash; one just before the content of the so-coded element and the other just after its content. Like this:</p>
+    <!-- ATTENTION: this is not valid html. -->
+    <!-- It's just for illustrative purposes. -->
+   <!--  <element>
+        <imaginary--before></imaginary--before>
+        This is the content of the element
+        <imaginary--after></imaginary--after>
+    </element> -->
+    <script src="https://gist.github.com/Eti-mfon/f74a344e98d5b848e9feabc9b362993a.js"></script>
+    <p>By default the so-inserted imaginary elements do not have any content whatsoever. They just go unnoticed &mdash; of course, they are imaginary &mdash; until someone shows them some love with css. The imaginary element before the content is selected by the <em class="selector">:before</em> (or <em class="selector">::before</em>) css pseudoelement selector, while the one after the content is selected by the <em class="selector">:after</em> (or <em class="selector">::after</em>) css pseudoelement selector. And, oh, the technically correct term is <strong>pseudoelement</strong>. We should only use the phrase <em>imaginary element</em> when we're amongst friends.</p>
+    <p>So, the selector <em class="selector">.my-badge:after</em> selects the pseudoelement just <strong>after</strong> the content of the element of the <em class="attribute-value">my-badge</em> class.</p>
+    <p>Now, just so we can see the end from the beginning, this so-selected pseudoelement is what we will style to become that pinkish circle (the badge) with that awesome number (the notification) inside it. We start by fetching the notification from the <em class="attribute-name">data-badge</em> attribute. The <em class="css-function">attr()</em> css function comes in handy for that.</p>
+<!--     <style>
+        .my-badge:after {
+            content: attr(data-badge);
+        }
+    </style>
+    <span class="my-badge" data-badge="9">Parties Nearby</span> -->
+    <script src="https://gist.github.com/Eti-mfon/cda4c3883eb8eaf8fd46e0f42af7c780.js"></script>
+    <div class="example example--03">
+        <span class="my-badge" data-badge="9">Parties Nearby</span>
+    </div>
+    <p>We've just grabbed the value of the <em class="attribute-name">data-badge</em> attribute and set it as the content of the pseudoelement. That's pretty ingenious, but we won't throw a party just yet. There's still a lot to be put into this.</p>
+    <!-- <style>
+        .my-badge:after {
+            content: attr(data-badge);
+
+            background: rgb(225,64,129);
+            width: 22px;
+            height: 22px;
+        }
+    </style>
+    <span class="my-badge" data-badge="9">Parties Nearby</span> -->
+    <script src="https://gist.github.com/Eti-mfon/c5a70244b7d927fa8658695f20a25edd.js"></script>
+    <div class="example example--04">
+        <span class="my-badge" data-badge="9">Parties Nearby</span>
+    </div>
+    <p>However, it seems the rules for the width and height have been ignored. Widths and heights can <b>NOT</b> be set on inline elements. Perhaps pseudoelements are inline by default. Let's set the display to inline-block and see what happens.</p>
+    <!-- <style>
+        .my-badge:after {
+            content: attr(data-badge);
+            background: rgb(225,64,129);
+            width: 22px;
+            height: 22px;
+
+            display: inline-block;
+        }
+    </style>
+    <span class="my-badge" data-badge="9">Parties Nearby</span> -->
+    <script src="https://gist.github.com/Eti-mfon/a59c78235d0acba6b8a8cfb04f076110.js"></script>
+    <div class="example example--05">
+        <span class="my-badge" data-badge="9">Parties Nearby</span>
+    </div>
+    <p>Phew, that works! Can you tell why we wouldn't want to set the display to block?</p>
+    <p>You're probably right!</p>
+    <p>To turn that square into a circle we give it a fifty-percent border radius on all vertices.</p>
+    <!-- <style>
+        .my-badge:after {
+            content: attr(data-badge);
+            background: rgb(225,64,129);
+            width: 22px;
+            height: 22px;
+            display: inline-block;
+
+            border-radius: 50%;
+        }
+    </style>
+    <span class="my-badge" data-badge="9">Parties Nearby</span> -->
+    <script src="https://gist.github.com/Eti-mfon/a2aa973885661193813a39d3f2271b97.js"></script>
+    <div class="example example--06">
+        <span class="my-badge" data-badge="9">Parties Nearby</span>
+    </div>
+    <p>Ah, but the number ...! We need it to be both vertically and horizontally centred. Horizontal centering of text is easily dealt with by using the <em class="property-name">text-align</em> property. And as for vertical centering of text, well, very many years ago a css-curious philosopher with an abacus and a pocket slide rule asked herself, <em>"What would happen if I set the line height of this text to the height of its container?"</em></p>
+    <!-- <#insert cartoon> -->
+    <!-- <style>
+        .my-badge:after {
+            content: attr(data-badge);
+            background: rgb(225,64,129);
+            width: 22px;
+            height: 22px;
+            display: inline-block;
+            border-radius: 50%;
+
+            text-align: center;
+            line-height: 22px;
+        }
+    </style>
+    <span class="my-badge" data-badge="9">Parties Nearby</span> -->
+    <script src="https://gist.github.com/Eti-mfon/8106ab66cd186a8d099c9d0ee37eb915.js"></script>
+    <div class="example example--07">
+        <span class="my-badge" data-badge="9">Parties Nearby</span>
+    </div>
+    <p>Now, if only she had installed notepad on her abacus!</p>
+    <p>It's time to make the number more awesome looking.</p>
+    <!-- <style>
+        .my-badge:after {
+            content: attr(data-badge);
+            background: rgb(225,64,129);
+            width: 22px;
+            height: 22px;
+            display: inline-block;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+
+            font-weight: 600;
+            font-size: 12px;
+            color: rgb(225,225,225);
+        }
+    </style>
+    <span class="my-badge" data-badge="9">Parties Nearby</span> -->
+    <script src="https://gist.github.com/Eti-mfon/0e029324618627fc4d3eb2c7160e79f9.js"></script>
+    <div class="example example--08">
+        <span class="my-badge" data-badge="9">Parties Nearby</span>
+    </div>
+    <p>Okay. It's all falling into place. And speaking of place, the badge should be placed on the top right corner of the item it's badging. We could do that either by tweaking the margins or using css positioning. Let's go the positioning way. The diagram below shows what we want to achieve:</p>
+    <div class="example example--final">
+        <span class="my-badge" data-badge="9">Parties Nearby</span>
+    </div>
+    <p>In order to have total control over the placement of the pink circle, we use absolute positioning. Absolute positioning lets us place an element the way we want with respect to its next non-static parent. In our case, we want to place the pseudoelement with respect to its immediate parent &mdash; the element with the <em class="attribute-value">my-badge</em> class &mdash; so we <strong>explicitly set the position of it's immediate parent to something other than static</strong>.</p>
+    <p>This is very important.</p>
+    <!-- <style>
+        .my-badge {
+            position: relative;
+        }
+        .my-badge:after {
+            content: attr(data-badge);
+            background: rgb(225,64,129);
+            width: 22px;
+            height: 22px;
+            display: inline-block;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-weight: 600;
+            font-size: 12px;
+            color: rgb(225,225,225);
+        }
+    </style>
+    <span class="my-badge" data-badge="9">Parties Nearby</span> -->
+    <script src="https://gist.github.com/Eti-mfon/180c86943a2ac6749b7d183b375cf375.js"></script>
+    <div class="example example--09">
+        <span class="my-badge" data-badge="9">Parties Nearby</span>
+    </div>
+    <p>Next we set the absolute positioning on the pseudoelement and use the <em class="property-name">top</em> css property to position its <b>top</b> with respect to the <b>top</b> of its <b>first non-static parent</b> &mdash; which is the <em>real/non-pseudo</em> badge element.</p>
+    <!-- <style>
+        .my-badge {
+            position: relative;
+        }
+        .my-badge:after {
+            content: attr(data-badge);
+            background: rgb(225,64,129);
+            width: 22px;
+            height: 22px;
+            display: inline-block;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-weight: 600;
+            font-size: 12px;
+            color: rgb(225,225,225);
+            
+            position: absolute;
+            top: -11px;
+        }
+    </style>-->
+    <script src="https://gist.github.com/Eti-mfon/abcc9aadfdf64607d69628eb43077229.js"></script>
+    <div class="example example--final">
+        <span class="my-badge" data-badge="9">Parties Nearby</span>
+    </div>
+    <p>Note that we've specified that its top should be placed -11 pixels away from its parent's top. This way, its parent's top border would bisect it perfectly if it were long enough. Slap a <strong>1px solid <i>color-of-choice</i></strong> border around the parent element to see it.</p>
+    <p>We could wrap it up at this point and congratulate ourselves on the creation of a reusable css class for creating badges. However, as we'll see in the next article, a few things could go wrong with our new creation as is.</p>
+
+</body>
+</html>
